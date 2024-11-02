@@ -1,4 +1,4 @@
-package org.example.board;
+package org.example.models;
 
 /**
  * Model class used to represent a connect4 board.
@@ -23,15 +23,7 @@ public class Board {
      * Model class used to represent a connect4 map.
      */
 
-    public void step(int r, int p) {
 
-        for (int i = this.getH() - 1; i >= 0; i--) {
-            if (this.geti(i, r - 1) == 0) {
-                this.seti(i, r - 1, p);
-                break;
-            }
-        }
-    }
 
 
     public int getW() {
@@ -47,10 +39,10 @@ public class Board {
     }
 
     public int geti(int x, int y) {
-        return board[x][y];
+        return board[y][x];
     }
 
     public void seti(int x, int y, int c) {
-        board[x][y] = c;
+        board[y][x] = c;
     }
 }
