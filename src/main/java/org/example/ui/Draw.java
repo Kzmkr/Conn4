@@ -1,36 +1,43 @@
 package org.example.ui;
 
-import org.example.board.Board;
+import org.example.models.Board;
 
 /**
  * Model class used to represent a connect4 map.
  */
 
 public class Draw {
+    private final Board board;
+
+    public Draw(Board b) {
+
+        this.board = b;
+    }
 
     /**
-     * Model class used to represent a connect4 map.
+     * Gets input from user.
      */
 
-    public static void draw_Board(Board b) {
+    public void draw_Board() {
+        System.out.println("\033c");
         StringBuilder l = new StringBuilder();
         String c = "";
         String c1 = "";
 
 
-        for (int j = 0; j < b.getW(); j++) {
+        for (int j = 0; j < this.board.getW(); j++) {
             l.append("│ " + c1 + (j + 1) + " \u001B[0m");
             c = "( )";
         }
         l.append("│");
         System.out.print(l + "\n");
-        for (int i = 0; i < b.getH(); i++) {
+        for (int i = 0; i < this.board.getH(); i++) {
             l.setLength(0);
-            for (int j = 0; j < b.getW(); j++) {
-                if (b.getB()[i][j] == 1) {
+            for (int j = 0; j < this.board.getW(); j++) {
+                if (this.board.getB()[i][j] == 1) {
                     c = "\u001B[41;30m(O)";
                 }
-                if (b.getB()[i][j] == 2) {
+                if (this.board.getB()[i][j] == 2) {
                     c = "\u001B[103;30m(X)";
                 }
 
@@ -44,6 +51,10 @@ public class Draw {
         }
 
 
+    }
+
+    public void ask_name() {
+        System.out.println("Enter your name: ");
     }
 
     /**

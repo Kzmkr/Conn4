@@ -1,9 +1,9 @@
-package org.example.utils;
+package org.example.input;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.example.board.Board;
+import org.example.models.Board;
 
 /**
  * Intereact with file.

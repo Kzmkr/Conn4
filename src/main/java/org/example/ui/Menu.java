@@ -46,6 +46,7 @@ public class Menu {
                 menuss = menuss + c + r + "\n";
             }
         }
+
         String[] opciok = {"Játék", "pálya beolvasása", "kilépés"};
         int i = 1;
         for (String s : opciok) {
