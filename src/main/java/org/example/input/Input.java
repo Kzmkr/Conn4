@@ -9,6 +9,15 @@ import java.util.Scanner;
 public class Input {
     private static final Scanner scan = new Scanner(System.in);
 
+    public static boolean isNumeric(String strNum) {
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets input from user.
      */
@@ -30,7 +39,7 @@ public class Input {
             try {
 
                 String in = scan.next();
-                if(!isNumeric(in)){
+                if (! isNumeric(in)) {
                     return in;
                 }
             } catch (Exception e) {
@@ -39,14 +48,6 @@ public class Input {
             }
             System.out.println("Please try again");
         }
-    }
-    public static boolean isNumeric(String strNum) {
-        try {
-            double d = Double.parseDouble(strNum);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
     }
 }
 

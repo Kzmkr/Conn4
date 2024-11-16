@@ -6,14 +6,20 @@ package org.example.models;
 public class Board {
 
 
-    private final int width;
-    private final int height;
+    private  int width;
+    private  int height;
     private int[][] board;
 
     public Board(int height, int width) {
         this.height = height;
         this.width = width;
        this.board = new int[height][width];
+    }
+
+    public void deepcopy(int height, int width, int[][] b) {
+        this.height = height;
+        this.width = width;
+        this.board = b;
     }
 
     public void fill(int[][] b) {
@@ -37,6 +43,7 @@ public class Board {
     public int[][] getB() {
         return board;
     }
+
 
     public int geti(int x, int y) {
         return board[y][x];

@@ -50,17 +50,35 @@
       <version>3.12.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jline</groupId>
+      <artifactId>jline</artifactId>
+      <version>3.27.0</version>
+    </dependency>
 
     <dependency>
       <groupId>com.github.lalyos</groupId>
       <artifactId>jfiglet</artifactId>
       <version>0.0.9</version>
     </dependency>
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.43.2.0</version>
+    </dependency>
 
 
   </dependencies>
   <build>
+
+
     <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+        </configuration>
+      </plugin>
       <plugin>
         <!-- Build an executable JAR -->
         <groupId>org.apache.maven.plugins</groupId>
@@ -102,8 +120,14 @@
         </executions>
     </plugin>
 
-
     </plugins>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <targetPath>${basedir}/target/src/main/resources</targetPath>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
   </build>
   <reporting>
     <plugins>

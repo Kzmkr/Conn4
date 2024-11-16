@@ -28,7 +28,7 @@ public class Validate {
 
         int count = 1;
 
-        for (int i = row+1; i < b.getH() && b.geti(col,i) == b.geti(col, row); i++) {
+        for (int i = row + 1; i < b.getH() && b.geti(col, i) == b.geti(col, row); i++) {
             count++;
         }
         return count > 3;

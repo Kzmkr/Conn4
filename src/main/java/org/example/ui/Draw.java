@@ -1,160 +1,81 @@
 package org.example.ui;
 
 import org.example.models.Board;
+import org.example.models.Player;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
 
 /**
  * Model class used to represent a connect4 map.
  */
-
 public class Draw {
     private final Board board;
+    private final Player player1;
+    private final Player player2;
 
-    public Draw(Board b) {
+    public Draw(Board board, Player player1, Player player2) {
+        this.board = board;
+        this.player1 = player1;
+        this.player2 = player2;
 
-        this.board = b;
+
     }
 
     /**
-     * Gets input from user.
+     * Draws the board with the current state.
+     *
+     * @param sel    The selected column.
+     * @param player The current player.
      */
+    public void draw_Board(int sel, Player player) {
+        sel = sel + 1;
+        StringBuilder boardText = new StringBuilder();
+        String[] saveOptions = {"To save hit (S)", "To exit hit (Q)", "To restart hit (R)"};
+        AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK);
 
-    public void draw_Board() {
-        System.out.println("\033c");
-        StringBuilder l = new StringBuilder();
-        String c = "";
-        String c1 = "";
+        AttributedStyle style1 = style.background(player1.getColor());
+        AttributedStyle style2 = style.background(player2.getColor());
 
-
-        for (int j = 0; j < this.board.getW(); j++) {
-            l.append("│ " + c1 + (j + 1) + " \u001B[0m");
-            c = "( )";
-        }
-        l.append("│");
-        System.out.print(l + "\n");
-        for (int i = 0; i < this.board.getH(); i++) {
-            l.setLength(0);
-            for (int j = 0; j < this.board.getW(); j++) {
-                if (this.board.getB()[i][j] == 1) {
-                    c = "\u001B[41;30m(O)";
-                }
-                if (this.board.getB()[i][j] == 2) {
-                    c = "\u001B[103;30m(X)";
-                }
-
-                l.append("│" + c + "\u001B[0m");
-                c = "( )";
+        // Draw column numbers
+        for (int j = 1; j <= board.getW(); j++) {
+            String pad = (j > 9) ? "" : " ";
+            String number = " " + j + pad;
+            if (j == sel) {
+                AttributedStyle style3 = style.background(player.getColor());
+                AttributedString selected = new AttributedString(" " + j + pad, style3);
+                number = selected.toAnsi();
             }
-            l.append("│\n");
-            System.out.print(l);
+            boardText.append("│").append(number);
+        }
+        boardText.append("│\n");
 
+        // Draw board cells
+        for (int i = 0; i < board.getH(); i++) {
+            StringBuilder row = new StringBuilder();
+            for (int j = 0; j < board.getW(); j++) {
+                String cell = "( )";
 
+                if (board.getB()[i][j] == player1.getId()) {
+                    AttributedString attributeCell = new AttributedString("(O)", style1);
+                    cell = attributeCell.toAnsi();
+                } else if (board.getB()[i][j] == player2.getId()) {
+                    AttributedString attributeCell = new AttributedString("(X)", style2);
+                    cell = attributeCell.toAnsi();
+                }
+                row.append("│").append(cell).append("\u001B[0m");
+            }
+            String option = (i < 3) ? saveOptions[i] : " ";
+            row.append("|").append(String.format("%" + (40 + option.length()) + "s%n", option.replaceAll(".", "$0 ")));
+            boardText.append(row);
         }
 
-
+        System.out.print(boardText);
     }
 
+    /**
+     * Prompts the user to enter their name.
+     */
     public void ask_name() {
         System.out.println("Enter your name: ");
     }
-
-    /**
-     * Model class used to represent a connect4 map.
-     */
-
-    public static void draw2(int[][] b) {
-        StringBuilder l = new StringBuilder();
-        final String r = "\u001B[0m";
-        String c = "";
-        for (int i = 0; i < 7; i++) {
-
-
-            for (int j = 0; j < 6; j++) {
-                if (b[i][j] == 1) {
-                    c = "\u001B[41;30m";
-                }
-                if (b[i][j] == 2) {
-                    c = "\u001B[103;30m";
-                }
-
-                l.append(" " + c + "/     \\" + r);
-                c = "";
-            }
-            System.out.print(l + "\n");
-            l.setLength(0);
-            l.append("");
-            for (int j = 0; j < 6; j++) {
-                l.append(" " + c + "|     |" + r);
-            }
-            System.out.print(l + "\n");
-            l.setLength(0);
-            for (int j = 0; j < 6; j++) {
-                l.append(" " + c + "\\     /" + r);
-            }
-
-            System.out.print(l + "\n");
-            l.setLength(0);
-        }
-    }
-
-    /**
-     * Model class used to represent a connect4 map.
-     */
-    public static void draw5(int[][] b) {
-
-        StringBuilder l = new StringBuilder();
-        final String r = "\u001B[0m";
-        String c = "\u001B[0m";
-        String bc = "\u001B[104m";
-        for (int i = 0; i < 6; i++) {
-
-            for (int j = 0; j < 7; j++) {
-                if (b[i][j] == 1) {
-                    c = "\u001B[101;30m";
-                }
-                if (b[i][j] == 2) {
-                    c = "\u001B[103;30m";
-                }
-
-                l.append(bc + "|" + c + "/       \\" + r);
-                c = "\u001B[0m";
-            }
-            l.append(bc + "|" + r);
-            System.out.print(l + "\n");
-            l.setLength(0);
-
-            for (int j = 0; j < 7; j++) {
-                if (b[i][j] == 1) {
-                    c = "\u001B[101;30m";
-                }
-                if (b[i][j] == 2) {
-                    c = "\u001B[103;30m";
-                }
-                l.append(bc + "|" + c + "         " + r);
-                c = "\u001B[0m";
-            }
-            l.append(bc + "|" + r);
-
-            System.out.print(l + "\n");
-            l.setLength(0);
-            for (int j = 0; j < 7; j++) {
-                if (b[i][j] == 1) {
-                    c = "\u001B[101;30m";
-                }
-                if (b[i][j] == 2) {
-                    c = "\u001B[103;30m";
-                }
-                l.append(bc + "|" + c + "\\       /" + r);
-                c = "\u001B[0m";
-            }
-            l.append(bc + "|" + r);
-            System.out.print(l + "\n");
-            l.setLength(0);
-
-        }
-        System.out.print("\n\n");
-
-    }
-
-
 }
-
