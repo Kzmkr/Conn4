@@ -5,6 +5,8 @@ import org.example.models.Player;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 
+
+
 /**
  * Model class used to represent a connect4 map.
  */
@@ -12,13 +14,14 @@ public class Draw {
     private final Board board;
     private final Player player1;
     private final Player player2;
+    private final String[] options = {"Save", "Open", "Restart", "Exit"};
+
+
 
     public Draw(Board board, Player player1, Player player2) {
         this.board = board;
         this.player1 = player1;
         this.player2 = player2;
-
-
     }
 
     /**
@@ -27,15 +30,16 @@ public class Draw {
      * @param sel    The selected column.
      * @param player The current player.
      */
-    public void draw_Board(int sel, Player player) {
+    public String draw_Board(int sel, Player player) {
         sel = sel + 1;
         StringBuilder boardText = new StringBuilder();
-        String[] saveOptions = {"To save hit (S)", "To exit hit (Q)", "To restart hit (R)"};
+
         AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK);
 
         AttributedStyle style1 = style.background(player1.getColor());
         AttributedStyle style2 = style.background(player2.getColor());
 
+        boardText.append(topMenu(sel, style1)).append("\n");
         // Draw column numbers
         for (int j = 1; j <= board.getW(); j++) {
             String pad = (j > 9) ? "" : " ";
@@ -62,15 +66,38 @@ public class Draw {
                     AttributedString attributeCell = new AttributedString("(X)", style2);
                     cell = attributeCell.toAnsi();
                 }
-                row.append("│").append(cell).append("\u001B[0m");
+
+                row.append("│").append(cell);
             }
-            String option = (i < 3) ? saveOptions[i] : " ";
-            row.append("|").append(String.format("%" + (40 + option.length()) + "s%n", option.replaceAll(".", "$0 ")));
-            boardText.append(row);
+
+            boardText.append(row).append("│\n");
+
+
         }
 
-        System.out.print(boardText);
+        return boardText.toString();
     }
+
+    private String topMenu(int sel, AttributedStyle style1) {
+        AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK).background(7);
+        StringBuilder optionsText = new StringBuilder();
+        for (int i = 0; i < options.length; i++) {
+            String option = options[i];
+            if (i == sel * - 1) {
+                AttributedString selected = new AttributedString("  " + option + "  ", style1);
+                option = selected.toAnsi();
+            } else {
+                AttributedString selected = new AttributedString("  " + option + "  ", style);
+                option = selected.toAnsi();
+            }
+            optionsText.append(option);
+        }
+        optionsText.append("\n");
+
+        return optionsText.toString();
+    }
+
+
 
     /**
      * Prompts the user to enter their name.
