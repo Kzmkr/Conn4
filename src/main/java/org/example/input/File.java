@@ -58,6 +58,10 @@ public class File {
             symbol.appendChild(document.createTextNode(p.getSymbol()));
             player.appendChild(symbol);
 
+            Element ishuman = document.createElement("Ishuman");
+            ishuman.appendChild(document.createTextNode(String.valueOf(p.isHuman())));
+            player.appendChild(ishuman);
+
             // Create board element
             Element board = document.createElement("Board");
             root.appendChild(board);
@@ -115,7 +119,8 @@ public class File {
             String name = playerElement.getElementsByTagName("Name").item(0).getTextContent();
             int color = Integer.parseInt(playerElement.getElementsByTagName("Color").item(0).getTextContent());
             String symbol = playerElement.getElementsByTagName("Symbol").item(0).getTextContent();
-            Player player = new Player(1, name, color, symbol);
+            boolean isHuman = Boolean.parseBoolean(playerElement.getElementsByTagName("Ishuman").item(0).getTextContent());
+            Player player = new Player(1, name, color, symbol, isHuman);
 
             // Read Board
             Element boardElement = (Element) document.getElementsByTagName("Board").item(0);

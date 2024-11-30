@@ -1,6 +1,7 @@
 package org.example.utils;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.example.input.Database;
 import org.example.input.File;
@@ -8,13 +9,12 @@ import org.example.input.InAndOutput;
 import org.example.models.Board;
 import org.example.models.Player;
 import org.example.ui.Draw;
-import org.example.ui.HighscorePrinter;
 import org.example.ui.Menu;
 import org.jline.terminal.Terminal;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp;
 import org.jline.utils.InfoCmp.Capability;
+
+
 
 /**
  * The Game class manages the main game logic, including initialization, menu handling,
@@ -35,7 +35,9 @@ public class Game {
     private Draw drawer;
     private Validate validator;
     private Step stepper;
+
     private int width;
+
 
     /**
      * Starts the game by initializing components, handling menu selection, and processing the selection.
@@ -49,20 +51,21 @@ public class Game {
     /**
      * Initializes the game components, including players, board, database, file, menu, validator, stepper, and terminal.
      */
-    private void initializeGameComponents() {
-        player1 = new Player(1, "Player 1", 9, "X");
-        player2 = new Player(2, "player 2", 11, "O");
+    public void initializeGameComponents() {
+
+
         board = new Board(boardHeight, boardWidth);
-        dbd.createNewTable("hs.db");
         file = new File();
         menu = new Menu();
         validator = new Validate();
         stepper = new Step(board);
-        HighscorePrinter highscorePrinter = new HighscorePrinter();
         inAndOut = new InAndOutput();
         terminal = inAndOut.setupTerminal();
+        player1 = new Player(1, "player", 11, "O", true);
+        player2 = new Player(2, "T-1000", 9, "X", false);
         drawer = new Draw(board, player1, player2);
         width = terminal.getWidth();
+
     }
 
     /**
@@ -70,60 +73,59 @@ public class Game {
      *
      * @return the selected menu option index
      */
-    private int handleMenuSelection() {
-        if ("dumb".equals(terminal.getType())) {
-            printMenu(-1);
+    public int handleMenuSelection() {
+
+        if (inAndOut.isTerminalDumb()) {
+
+            printMenu(- 1);
             return inAndOut.read();
         }
 
-        int i = 0;
+        int selectedIndex = 0;
         terminal.puts(Capability.clear_screen);
-        printMenu(i);
+        printMenu(selectedIndex);
         boolean isMenuOpen = true;
         while (isMenuOpen) {
             int key = inAndOut.terminalRead(100);
-            if (key == 13) { // Enter key
-                isMenuOpen = false;
+            switch (key) {
+                case 13: // Enter key
+                    isMenuOpen = false;
+                    break;
+                case 27: // Escape character
+                    selectedIndex = inAndOut.handleArrowKey(selectedIndex, 3);
+                    printMenu(selectedIndex);
+                    break;
+                default:
+                    break;
             }
-            if (key == 27) { // Escape character
-                i = inAndOut.handleArrowKey(i, 3);
-                printMenu(i);
-            }
+
             if (terminal.getWidth() != width) {
                 width = terminal.getWidth();
                 terminal.puts(InfoCmp.Capability.clear_screen);
-                printMenu(i);
+                printMenu(selectedIndex);
             }
         }
-        return i + 1;
+        return selectedIndex + 1;
     }
 
-    /**
-     * Prints the menu to the terminal.
-     *
-     * @param i the index of the currently selected menu option
-     */
-    private void printMenu(int i) {
-        terminal.puts(Capability.cursor_address, 0, 0);
-        System.out.print(menu.menu(i, width));
-    }
 
     /**
      * Processes the selected menu option and performs the corresponding action.
      *
      * @param selectedOption the selected menu option index
      */
-    private void processMenuSelection(int selectedOption) {
+    public void processMenuSelection(int selectedOption) {
         switch (selectedOption) {
             case 3:
                 terminal.puts(Capability.cursor_visible);
-                System.exit(0);
+                exit();
                 break;
             case 2:
                 loadGame();
                 break;
             case 1:
-                startGameLoop();
+                player1.setName(askName());
+                 startGameLoop();
                 break;
             default:
                 break;
@@ -131,9 +133,20 @@ public class Game {
     }
 
     /**
+     * Prints the menu to the terminal.
+     *
+     * @param i the index of the currently selected menu option
+     */
+
+    public void printMenu(int i) {
+        terminal.puts(Capability.cursor_address, 0, 0);
+        System.out.print(menu.menu(i, width));
+    }
+
+    /**
      * Loads a saved game from a file and starts the game loop.
      */
-    private void loadGame() {
+    public void loadGame() {
         Object[] objects = file.read("src/main/resources/output.xml");
         Board b = (Board) objects[0];
         board.deepCopy(b.getH(), b.getW(), b.getB());
@@ -144,11 +157,10 @@ public class Game {
     /**
      * Asks the player for their name and updates the database with the new name.
      */
-    private void askName() {
-        terminal.puts(Capability.cursor_visible);
-        drawer.ask_name();
-        String name = inAndOut.read_string();
-        dbd.update(name, 1, 0);
+    public String askName() {
+        terminal.puts(Capability.clear_screen);
+        System.out.println("Enter your name: ");
+        return inAndOut.read_string();
     }
 
     /**
@@ -158,57 +170,142 @@ public class Game {
      * @return the selected column index
      * @throws IOException if an I/O error occurs
      */
-    private int handleColSelection(Player p) throws IOException {
+    public int handleColSelection(Player p) throws IOException {
         int i = 0;
-        int flip = 1;
         terminal.puts(Capability.clear_screen);
-        terminal.puts(Capability.cursor_address, 0, 0);
-        System.out.print(drawer.draw_Board(0, p));
+        System.out.print(drawer.draw_Board(0, - 1, p));
 
         boolean isMenuOpen = true;
         while (isMenuOpen) {
-            int key = terminal.reader().read();
+            int key = inAndOut.terminalRead(300);
             if (key >= '0' && key <= '9') {
-                int key2 = terminal.reader().read(300);
-                if (key2 == -2) {
+                int key2 = inAndOut.terminalRead(300);
+                if (key2 == - 2) {
                     i = key - '0';
                 } else {
                     i = (key - '0') * 10 + key2 - '0';
                 }
+
                 isMenuOpen = false;
-            } else if (key == 13) {
-                isMenuOpen = false;
-            } else if (key == 'q') {
-                processMenuSelection(3);
-            } else if (key == 's') {
-                file.write("src/main/resources/output.xml", board, player1);
-                System.exit(0);
-            } else if (key == 'r') {
-                terminal.puts(Capability.clear_screen);
-                board.clear();
-                startGameLoop();
-            } else if (key == 27) { // Escape character
-                i = inAndOut.handleArrowKey(i, board.getW());
+            } else {
+                switch (key) {
+
+                    case 13: // Enter key
+                        isMenuOpen = false;
+                        break;
+                    case 'e':
+                        terminal.puts(Capability.cursor_visible);
+                        exit();
+                        break;
+                    case 's':
+                        save();
+                        break;
+                    case 'r':
+                        terminal.puts(Capability.clear_screen);
+                        board.clear();
+                        startGameLoop();
+                        break;
+                    case 27: // Escape character
+                        i = inAndOut.handleArrowKey(i, board.getW() + 1);
+                        break;
+                    default:
+                        break;
+                }
             }
             terminal.puts(Capability.cursor_address, 0, 0);
-            System.out.print(drawer.draw_Board((i) * flip, p));
+            System.out.print(drawer.draw_Board(i, - 1, p));
         }
 
-        return i;
+        return i - 1;
+    }
+    /**
+     * Exits the application by terminating the JVM.
+     */
+
+    public void exit() {
+        System.exit(0);
+    }
+
+    /**
+     * Saves the current game state to a file and exits the application.
+     */
+
+    public void save() {
+        file.write("src/main/resources/output.xml", board, player1);
+        terminal.puts(Capability.cursor_visible);
+        exit();
+    }
+
+
+    public void setTerminal(Terminal terminal) {
+        this.terminal = terminal;
+    }
+
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void setInAndOut(InAndOutput inAndOut) {
+        this.inAndOut = inAndOut;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public void setDrawer(Draw drawer) {
+        this.drawer = drawer;
+    }
+
+    public void setValidator(Validate validator) {
+        this.validator = validator;
+    }
+
+    public void setStepper(Step stepper) {
+        this.stepper = stepper;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 
     /**
      * Starts the main game loop, alternating between player moves.
      */
-    private void startGameLoop() {
+    public void startGameLoop() {
         terminal.puts(Capability.clear_screen);
-        System.out.print(drawer.draw_Board(-1, player1));
+        System.out.print(drawer.draw_Board(- 1, - 1, player1));
 
         while (true) {
             handlePlayerMove(player1);
-            handlePlayerMove(player2);
+            botmove(player2);
+
         }
     }
+
+    public void botmove(Player p) {
+        Random random = new Random();
+        int row = - 1;
+        int col = 0;
+        while (row == - 1) {
+            col = random.nextInt(11);
+            row = stepper.isStepValid(col, board);
+        }
+        animateMove(p, col, row);
+    }
+
 
     /**
      * Handles a player's move, including column selection, move validation, and animation.
@@ -216,16 +313,20 @@ public class Game {
      * @param p the player making the move
      */
     private void handlePlayerMove(Player p) {
-        int row = -1;
-        int col = -1;
-        while (row == -1) {
+        int row = - 1;
+        int col = - 1;
+        while (row == - 1) {
             col = getPlayerMove(p);
             row = stepper.isStepValid(col, board);
         }
 
         animateMove(p, col, row);
         if (validator.validate(board, col, row)) {
-            announceWinner(p);
+            Database dbd = new Database();
+            dbd.createNewTable("hs.db");
+            String winner = inAndOut.announceWinner(p, player1.getName(), dbd);
+            System.out.println(winner);
+            exit();
         }
     }
 
@@ -235,9 +336,9 @@ public class Game {
      * @param p the player making the move
      * @return the selected column index
      */
-    private int getPlayerMove(Player p) {
-        int col = -1;
-        if ("dumb".equals(terminal.getType())) {
+    public int getPlayerMove(Player p) {
+        int col = - 1;
+        if (inAndOut.isTerminalDumb()) {
             col = inAndOut.read() - 1;
         } else {
             try {
@@ -253,47 +354,29 @@ public class Game {
     /**
      * Animates the player's move on the board.
      *
-     * @param p the player making the move
+     * @param p   the player making the move
      * @param col the column index
      * @param row the row index
      */
-    private void animateMove(Player p, int col, int row) {
-        if (!"dumb".equals(terminal.getType())) {
-            board.setI(col, 0, p.getId());
-            terminal.puts(Capability.clear_screen);
-            System.out.print(drawer.draw_Board(-55, p));
-            for (int j = 1; j <= row; j++) {
+    public void animateMove(Player p, int col, int row) {
+        if (! "dumb".equals(terminal.getType())) {
+            for (int j = 0; j <= row; j++) {
+                terminal.puts(Capability.cursor_address, 0, 0);
+                System.out.print(drawer.draw_Board(col, j, p));
                 try {
                     Thread.sleep(100 - j * 5L);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                board.setI(col, j - 1, 0);
-                board.setI(col, j, p.getId());
-                terminal.puts(Capability.cursor_address, 0, 0);
-                System.out.print(drawer.draw_Board(-551, p));
             }
-        } else {
-            board.setI(col, row, p.getId());
-            String move = drawer.draw_Board(-55, p);
-            System.out.print(move);
+
         }
+        board.setI(col, row, p.getId());
+        String move = drawer.draw_Board(- 1, - 1, p);
+        terminal.puts(Capability.cursor_address, 0, 0);
+        System.out.print(move);
+
     }
 
-    /**
-     * Announces the winner of the game and updates the database with the winner's name.
-     *
-     * @param p the player who won the game
-     */
-    private void announceWinner(Player p) {
-        String winner = "Player" + p.getId() + " wins";
-        AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK);
-        style = style.background(p.getColor());
-        AttributedString attributeText = new AttributedString(winner, style);
-        System.out.println("\n" + attributeText.toAnsi());
-        if (p.getId() == 1) {
-            askName();
-        }
-        System.exit(0);
-    }
+
 }

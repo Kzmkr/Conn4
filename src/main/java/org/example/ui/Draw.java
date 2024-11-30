@@ -6,7 +6,6 @@ import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 
 
-
 /**
  * Model class used to represent a connect4 map.
  */
@@ -15,7 +14,6 @@ public class Draw {
     private final Player player1;
     private final Player player2;
     private final String[] options = {"Save", "Open", "Restart", "Exit"};
-
 
 
     public Draw(Board board, Player player1, Player player2) {
@@ -27,25 +25,27 @@ public class Draw {
     /**
      * Draws the board with the current state.
      *
-     * @param sel    The selected column.
+     * @param selCol The selected column.
+     * @param selRow The selected Row.
      * @param player The current player.
      */
-    public String draw_Board(int sel, Player player) {
-        sel = sel + 1;
+    public String draw_Board(int selCol, int selRow, Player player) {
+
         StringBuilder boardText = new StringBuilder();
 
         AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK);
 
         AttributedStyle style1 = style.background(player1.getColor());
         AttributedStyle style2 = style.background(player2.getColor());
+        AttributedStyle style3 = style.background(player.getColor());
 
-        boardText.append(topMenu(sel, style1)).append("\n");
+        boardText.append(topMenu(style1)).append("\n");
         // Draw column numbers
         for (int j = 1; j <= board.getW(); j++) {
             String pad = (j > 9) ? "" : " ";
             String number = " " + j + pad;
-            if (j == sel) {
-                AttributedStyle style3 = style.background(player.getColor());
+
+            if (j == selCol && selRow == - 1) {
                 AttributedString selected = new AttributedString(" " + j + pad, style3);
                 number = selected.toAnsi();
             }
@@ -59,13 +59,16 @@ public class Draw {
             for (int j = 0; j < board.getW(); j++) {
                 String cell = "( )";
 
-                if (board.getB()[i][j] == player1.getId()) {
-                    AttributedString attributeCell = new AttributedString("(O)", style1);
-                    cell = attributeCell.toAnsi();
-                } else if (board.getB()[i][j] == player2.getId()) {
-                    AttributedString attributeCell = new AttributedString("(X)", style2);
+                if (board.getI(j, i) != 0) {
+                    style = (board.getI(j, i) == player1.getId()) ? style1 : style2;
+                    AttributedString attributeCell = new AttributedString("(O)", style);
                     cell = attributeCell.toAnsi();
                 }
+                if (j == selCol && i == selRow) {
+                    AttributedString attributeCell = new AttributedString("(O)", style3);
+                    cell = attributeCell.toAnsi();
+                }
+
 
                 row.append("│").append(cell);
             }
@@ -78,18 +81,15 @@ public class Draw {
         return boardText.toString();
     }
 
-    private String topMenu(int sel, AttributedStyle style1) {
+    private String topMenu(AttributedStyle style1) {
         AttributedStyle style = AttributedStyle.DEFAULT.foreground(AttributedStyle.BLACK).background(7);
         StringBuilder optionsText = new StringBuilder();
         for (int i = 0; i < options.length; i++) {
             String option = options[i];
-            if (i == sel * - 1) {
-                AttributedString selected = new AttributedString("  " + option + "  ", style1);
-                option = selected.toAnsi();
-            } else {
-                AttributedString selected = new AttributedString("  " + option + "  ", style);
-                option = selected.toAnsi();
-            }
+
+            AttributedString selected = new AttributedString("  " + option + "  ", style);
+            option = selected.toAnsi();
+
             optionsText.append(option);
         }
         optionsText.append("\n");
@@ -98,11 +98,4 @@ public class Draw {
     }
 
 
-
-    /**
-     * Prompts the user to enter their name.
-     */
-    public void ask_name() {
-        System.out.println("Enter your name: ");
-    }
 }

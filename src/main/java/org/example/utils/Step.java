@@ -8,8 +8,6 @@ import org.example.models.Board;
 public class Step {
 
     private final Board board;
-    private int lastR;
-    private int lastC;
 
     /**
      * Constructs a Step object with the specified board.
@@ -30,8 +28,6 @@ public class Step {
      */
     public boolean step(int r, int c, int p) {
         if (isStepValid(r, board) != -1) {
-            lastC = c;
-            lastR = r;
             board.setI(r, c, p);
             return true;
         }

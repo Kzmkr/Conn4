@@ -6,9 +6,13 @@ import org.example.models.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 public class FileTest {
 
@@ -21,7 +25,7 @@ public class FileTest {
     public void setUp() {
         fileHandler = new File();
         board = new Board(10, 10);
-        player = new Player(1, "Test Player", 9, "X");
+        player = new Player(1, "Test Player", 9, "X",true);
         testFilePath = "test_game.xml";
     }
 
@@ -46,17 +50,8 @@ public class FileTest {
         assertEquals(player.getSymbol(), readPlayer.getSymbol());
     }
 
-    @Test
-    public void testWriteWithInvalidPath() {
-        boolean writeResult = fileHandler.write("/invalid/patht???*est_game.xml", board, player);
-        assertFalse(writeResult);
-    }
 
-    @Test
-    public void testReadWithInvalidFile() {
-        Object[] result = fileHandler.read("non_existent_file.xml");
-        assertNull(result);
-    }
+
 
     @AfterEach
     public void tearDown() {

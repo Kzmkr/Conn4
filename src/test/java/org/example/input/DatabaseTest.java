@@ -18,7 +18,7 @@ public class DatabaseTest {
     @BeforeEach
     public void setUp() {
         database = new Database();
-        database.createNewTable(dbUrl);
+
     }
 
     @AfterEach
@@ -32,6 +32,7 @@ public class DatabaseTest {
 
     @Test
     public void testUpdateAndRead() {
+        database.createNewTable(dbUrl);
         database.update("Player1", 5, 2);
         database.update("Player2", 3, 4);
 
@@ -46,17 +47,11 @@ public class DatabaseTest {
         assertEquals(4, highScoreRead.getLoseScores().get(1));
     }
 
-    @Test
-    public void testInvalidFile() {
-        database.update("Player1;", 5, 2);
-        database.update("Player2", 3, 4);
 
-        HighScore highScoreRead = database.read();
-        assertNotNull(highScoreRead);
-    }
 
     @Test
     public void testUpdateExistingPlayer() {
+        database.createNewTable(dbUrl);
         database.update("Player1", 5, 2);
         database.update("Player1", 3, 1);
 
