@@ -62,11 +62,8 @@ public class InAndOutput {
      * @return the updated index
      */
     public int handleArrowKey(int i, int wrapValue) {
-        System.out.println("Please use the arrow keys to navigate the menu");
         int next = terminalRead(100); // '[' character
-        System.out.println(next);
         int arrow = terminalRead(100);
-        System.out.println(arrow);
         switch (arrow) {
             case 'A':
                 i = (i + wrapValue - 1) % wrapValue; // Move up

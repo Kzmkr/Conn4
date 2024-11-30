@@ -72,10 +72,15 @@ public class Menu {
             // Format and add the menu options to the menu string
             for (String s : opciok) {
                 int p = 35 + s.length();
+                if (sel == i) {
+                    selc = "\u001B[102;30m";
+                } else {
+                    selc = "";
+                }
 
 
                 String ss = String.format("%" + (len - s.length() * 2) / 2 + "s", "");
-                ss = ss  + (s.toUpperCase().replaceAll(".", "$0 ")) + "  " + (i + 1) + r;
+                ss = ss + selc +  (s.toUpperCase().replaceAll(".", "$0 ")) + "  " + (i + 1) + r;
                 menuss = menuss + ss + "\n" + paddin;
                 i++;
             }
