@@ -236,6 +236,9 @@ public class Game {
         exit();
     }
 
+    public Player getPlayer1() {
+        return player1;
+    }
 
     public void setTerminal(Terminal terminal) {
         this.terminal = terminal;
@@ -294,6 +297,11 @@ public class Game {
 
         }
     }
+    /**
+     * Handles the bot's move by selecting a random valid column and animating the move.
+     *
+     * @param p the player representing the bot
+     */
 
     public void botmove(Player p) {
         Random random = new Random();
@@ -312,7 +320,7 @@ public class Game {
      *
      * @param p the player making the move
      */
-    private void handlePlayerMove(Player p) {
+    public void handlePlayerMove(Player p) {
         int row = - 1;
         int col = - 1;
         while (row == - 1) {

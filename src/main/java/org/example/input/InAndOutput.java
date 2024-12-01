@@ -21,7 +21,7 @@ import org.jline.utils.InfoCmp;
  */
 
 public class InAndOutput {
-    private static final Scanner scan = new Scanner(System.in);
+    private Scanner scan = new Scanner(System.in);
     private Terminal terminal;
 
     /**
@@ -52,6 +52,10 @@ public class InAndOutput {
             e.printStackTrace();
         }
         return - 2;
+    }
+
+    public void setScan(Scanner scan) {
+        this.scan = scan;
     }
 
     /**
@@ -94,10 +98,12 @@ public class InAndOutput {
                 return scan.nextInt();
             } catch (Exception e) {
                 System.out.println("Please try again");
-                scan.next();
+                scan.nextInt();
             }
         }
     }
+
+
 
     public boolean isTerminalDumb() {
         return terminal.getType().equals("dumb");
@@ -161,6 +167,13 @@ public class InAndOutput {
      */
 
 
+
+    /**
+     * Reads a non-numeric string from the standard input.
+     *
+     * @return the string read
+     */
+
     public String read_string() {
         while (true) {
             try {
@@ -174,4 +187,6 @@ public class InAndOutput {
             System.out.println("Please try again");
         }
     }
+
+
 }

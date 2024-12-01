@@ -5,21 +5,17 @@ import org.jline.terminal.Terminal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 
 import java.io.*;
 import java.io.File;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class InAndOutTest {
 
         private InAndOutput inAndOut;
-        private Terminal terminal;
+
 
         private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         private final PrintStream originalOut = System.out;
@@ -64,6 +60,43 @@ public class InAndOutTest {
             assertEquals(1, key);
         }
 
+    @Test
+    public void handleArrowKeyMovesUp() {
+        inAndOut = spy(new InAndOutput());
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        doReturn((int) '[').doReturn((int) 'A').when(inAndOut).terminalRead(100);
+        int result = inAndOut.handleArrowKey(1, 10);
+        assertEquals(0, result);
+    }
+    @Test
+    public void handleArrowKeyMovesDown() {
+        inAndOut = spy(new InAndOutput());
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        doReturn((int) '[').doReturn((int) 'B').when(inAndOut).terminalRead(100);
+        int result = inAndOut.handleArrowKey(1, 10);
+        assertEquals(2, result);
+    }
+    @Test
+    public void handleArrowKeyMovesRight() {
+        inAndOut = spy(new InAndOutput());
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        doReturn((int) '[').doReturn((int) 'C').when(inAndOut).terminalRead(100);
+        int result = inAndOut.handleArrowKey(1, 10);
+        assertEquals(2, result);
+    }
+    @Test
+    public void handleArrowKeyMovesLeft() {
+        inAndOut = spy(new InAndOutput());
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        doReturn((int) '[').doReturn((int) 'D').when(inAndOut).terminalRead(100);
+        int result = inAndOut.handleArrowKey(1, 10);
+        assertEquals(0, result);
+    }
+
 
         @Test
         public void testAnnounceWinner() {
@@ -99,6 +132,38 @@ public class InAndOutTest {
         }
 
 
+    @Test
+    public void testIsTerminalDumb() {
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        // Arrange
+        when(mockTerminal.getType()).thenReturn("dumb");
 
+        // Act
+        boolean result = inAndOut.isTerminalDumb();
 
+        // Assert
+        assertTrue(result);
     }
+
+    @Test
+    public void testIsTerminalNotDumb() {
+        Terminal mockTerminal = mock(Terminal.class);
+        inAndOut.setTerminal(mockTerminal);
+        // Arrange
+        when(mockTerminal.getType()).thenReturn("xterm");
+
+        // Act
+        boolean result = inAndOut.isTerminalDumb();
+
+        // Assert
+        assertFalse(result);
+    }
+}
+
+
+
+
+
+
+
