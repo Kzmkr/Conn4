@@ -1,5 +1,6 @@
 package org.example.input;
 
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -21,7 +22,7 @@ import org.jline.utils.InfoCmp;
  */
 
 public class InAndOutput {
-    private Scanner scan = new Scanner(System.in);
+    private final Scanner scan = new Scanner(System.in);
     private Terminal terminal;
 
     /**
@@ -39,6 +40,8 @@ public class InAndOutput {
         return true;
     }
 
+
+
     /**
      * Reads a character from the terminal with a specified timeout.
      *
@@ -54,9 +57,7 @@ public class InAndOutput {
         return - 2;
     }
 
-    public void setScan(Scanner scan) {
-        this.scan = scan;
-    }
+
 
     /**
      * Handles arrow key inputs and updates the index based on the arrow key pressed.
@@ -98,10 +99,13 @@ public class InAndOutput {
                 return scan.nextInt();
             } catch (Exception e) {
                 System.out.println("Please try again");
-                scan.nextInt();
+                scan.next();
             }
         }
     }
+
+
+
 
 
 
@@ -160,11 +164,6 @@ public class InAndOutput {
         // Return the highscore table and the winner announcement
         return hsP.render(dbd.read()) + "\n" + attributeText.toAnsi();
     }
-    /**
-     * Reads a non-numeric string from the standard input.
-     *
-     * @return the string read
-     */
 
 
 
@@ -174,7 +173,7 @@ public class InAndOutput {
      * @return the string read
      */
 
-    public String read_string() {
+    public String readString() {
         while (true) {
             try {
                 String in = scan.next();

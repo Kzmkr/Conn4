@@ -22,9 +22,9 @@ import org.jline.utils.InfoCmp.Capability;
  */
 public class Game {
 
-    private final Database dbd = new Database();
-    private final int boardWidth = 10;
-    private final int boardHeight = 10;
+
+    private final int boardWidth = 11;
+    private final int boardHeight = 12;
     private Terminal terminal;
     private Player player1;
     private Player player2;
@@ -160,7 +160,7 @@ public class Game {
     public String askName() {
         terminal.puts(Capability.clear_screen);
         System.out.println("Enter your name: ");
-        return inAndOut.read_string();
+        return inAndOut.readString();
     }
 
     /**
@@ -231,58 +231,13 @@ public class Game {
      */
 
     public void save() {
+        System.out.println(board.getH());
         file.write("src/main/resources/output.xml", board, player1);
         terminal.puts(Capability.cursor_visible);
         exit();
     }
 
-    public Player getPlayer1() {
-        return player1;
-    }
 
-    public void setTerminal(Terminal terminal) {
-        this.terminal = terminal;
-    }
-
-    public void setPlayer1(Player player1) {
-        this.player1 = player1;
-    }
-
-    public void setPlayer2(Player player2) {
-        this.player2 = player2;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public void setInAndOut(InAndOutput inAndOut) {
-        this.inAndOut = inAndOut;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
-    public void setDrawer(Draw drawer) {
-        this.drawer = drawer;
-    }
-
-    public void setValidator(Validate validator) {
-        this.validator = validator;
-    }
-
-    public void setStepper(Step stepper) {
-        this.stepper = stepper;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
 
     /**
      * Starts the main game loop, alternating between player moves.
@@ -311,7 +266,9 @@ public class Game {
             col = random.nextInt(11);
             row = stepper.isStepValid(col, board);
         }
+
         animateMove(p, col, row);
+        checkWinner(p, col, row);
     }
 
 
@@ -329,6 +286,10 @@ public class Game {
         }
 
         animateMove(p, col, row);
+        checkWinner(p, col, row);
+    }
+
+    private void checkWinner(Player p, int col, int row) {
         if (validator.validate(board, col, row)) {
             Database dbd = new Database();
             dbd.createNewTable("hs.db");
@@ -384,6 +345,46 @@ public class Game {
         terminal.puts(Capability.cursor_address, 0, 0);
         System.out.print(move);
 
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public void setTerminal(Terminal terminal) {
+        this.terminal = terminal;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void setInAndOut(InAndOutput inAndOut) {
+        this.inAndOut = inAndOut;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public void setDrawer(Draw drawer) {
+        this.drawer = drawer;
+    }
+
+    public void setValidator(Validate validator) {
+        this.validator = validator;
+    }
+
+    public void setStepper(Step stepper) {
+        this.stepper = stepper;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 
 

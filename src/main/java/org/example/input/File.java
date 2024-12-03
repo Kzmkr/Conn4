@@ -81,7 +81,7 @@ public class File {
                 Element row = document.createElement("Row");
                 for (int j = 0; j < b.getW(); j++) {
                     Element cell = document.createElement("Cell");
-                    cell.appendChild(document.createTextNode(String.valueOf(b.getI(i, j))));
+                    cell.appendChild(document.createTextNode(String.valueOf(b.getI(j, i))));
                     row.appendChild(cell);
                 }
                 board.appendChild(row);
@@ -134,7 +134,7 @@ public class File {
                 NodeList cells = row.getElementsByTagName("Cell");
                 for (int j = 0; j < cells.getLength(); j++) {
                     int value = Integer.parseInt(cells.item(j).getTextContent());
-                    board.setI(i, j, value);
+                    board.setI(j, i, value);
                 }
             }
             return new Object[]{board, player};
