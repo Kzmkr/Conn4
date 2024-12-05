@@ -5,6 +5,8 @@ import de.vandermeer.asciitable.CWC_LongestLine;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import org.example.models.HighScore;
 
+import java.util.Locale;
+
 /**
  * The HighscorePrinter class provides methods to render high scores in a formatted table.
  */
@@ -32,7 +34,8 @@ public class HighscorePrinter {
             win = hs.getWinScoreAt(i);
             lose = hs.getLoseScoreAt(i);
             ratio = (float) win / (win + lose);
-            at.addRow(name, win, lose, String.format("%.2f", ratio));
+            Locale hungary = new Locale("hu", "HU");
+            at.addRow(name, win, lose, String.format(hungary,"%.2f", ratio));
             at.addRule();
         }
         CWC_LongestLine cwc = new CWC_LongestLine();

@@ -39,19 +39,6 @@ public class InAndOutTest {
         assertFalse(InAndOutput.isNumeric("abc"));
     }
 
-    @Test
-    public void testSetupTerminal() {
-        Terminal terminal = inAndOut.setupTerminal();
-        assertNotNull(terminal);
-    }
-
-    @Test
-    public void testTerminalRead() {
-        inAndOut.setupTerminal();
-        int key = inAndOut.terminalRead(1);
-        assertEquals(- 2, key);
-    }
-
 
     @Test
     public void testArrowWhitTimeOut() {

@@ -231,7 +231,7 @@ public class Game {
      */
 
     public void save() {
-        System.out.println(board.getH());
+
         file.write("src/main/resources/output.xml", board, player1);
         terminal.puts(Capability.cursor_visible);
         exit();
@@ -292,7 +292,7 @@ public class Game {
     private void checkWinner(Player p, int col, int row) {
         if (validator.validate(board, col, row)) {
             Database dbd = new Database();
-            dbd.createNewTable("hs.db");
+            dbd.createNewTable("src/main/resources/hs.db");
             String winner = inAndOut.announceWinner(p, player1.getName(), dbd);
             System.out.println(winner);
             exit();
@@ -341,9 +341,9 @@ public class Game {
 
         }
         board.setI(col, row, p.getId());
-        String move = drawer.draw_Board(- 1, - 1, p);
+
         terminal.puts(Capability.cursor_address, 0, 0);
-        System.out.print(move);
+        System.out.print(drawer.draw_Board(- 1, - 1, p));
 
     }
 
